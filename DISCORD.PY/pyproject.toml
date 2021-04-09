@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "dc-host"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+python-dotenv = "^0.15.0"
+discord = "^1.0.1"
+pyowm = "^3.2.0"
+better-profanity = "^0.7.0"
+ffmpeg = "^1.4"
+youtube-dl = "^2021.3.25"
+parse = "^1.19.0"
+pafy = "^0.5.5"
+youtube3 = "^1.2.1"
+googleAPI = "^0.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

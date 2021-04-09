@@ -1,0 +1,162 @@
+@client.command(aliases=['mixer', 'p', 'start_mixer', 'music', 'm'])
+async def play(ctx):
+  def check(m):
+    return m.author == ctx.author and m.channel == ctx.channel
+    
+  if pq.size() == 0:
+    
+    
+    
+    song_there = os.path.isfile("song.mp3")
+    try:
+      if song_there:
+        os.remove("song.mp3")
+    except PermissionError:
+      await ctx.send("Wait for the current playing music to end or use the 'stop' command")
+      return
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    print(voice)
+    if voice == None:
+      em = discord.Embed(title="Mixer", color=ctx.author.color)
+      em.add_field(name='Please answer the following question within the next 15 seconds:', value=f"{ctx.author.mention} please type the name of the song you would like to play.")
+      await ctx.send(embed=em)
+      try:
+        msg = await client.wait_for('message', timeout=15.0, check=check)
+
+      except asyncio.TimeoutError:
+        em2 = discord.Embed(title='Error', color=ctx.author.color)
+        em2.add_field(name='Mixer creation failed', value=f"{ctx.author.mention} you're too slow, please be quicker next time")      
+        await ctx.send(embed=em2) 
+        return
+      search_keyword = msg.content.replace(" ", "_")
+      print(search_keyword)
+      html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keyword)
+      video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+      finished_url = ("https://www.youtube.com/watch?v=" + video_ids[0])
+      video = pafy.new(finished_url)
+      value = video.length
+      em3=discord.Embed(title='Mixer', color=ctx.author.color)
+      em3.add_field(name='Mixer success please wait for the following song to be donwloaded and played', value=f"Playing {finished_url}, requested by {ctx.author.mention}")
+      await ctx.send(embed=em3)
+         
+      if value > 420:
+        await ctx.send('Sorry, 7 minute maximum length on videos')
+      else:
+        voiceChannel = ctx.author.voice.channel
+        await voiceChannel.connect()
+        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        ydl_opts = {
+          'format': 'bestaudio/best',
+          'postprocessors': [{
+          'key': 'FFmpegExtractAudio',
+          'preferredcodec': 'mp3',
+          'preferredquality': '192',
+            }],
+            }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+          ydl.download([finished_url])
+          for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+              os.rename(file, "song.mp3")
+              voice.play(discord.FFmpegPCMAudio("song.mp3"))
+              while True:
+                if voice.is_playing() == True:
+                  pass
+                elif voice.is_playing() == False and pq.is_empty() == False:
+                  xyz = pq.dequeue()
+                  search_keyword = xyz.content.replace(" ", "_")
+                  html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keyword)
+                  video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+                  finished_url = ("https://www.youtube.com/watch?v=" + video_ids[0])
+                  video = pafy.new(finished_url)
+                  value = video.length
+                  em3=discord.Embed(title='Mixer', color=ctx.author.color)
+                  em3.add_field(name='Mixer success please wait for the following song to be donwloaded and played', value=f"Playing {finished_url}, requested by {ctx.author.mention}")
+                  await ctx.send(embed=em3)
+                    
+                  if value > 420:
+                    await ctx.send('Sorry, 7 minute maximum length on videos')
+                  else:
+                    voiceChannel = ctx.author.voice.channel
+                    await voiceChannel.connect()
+                    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+                    ydl_opts = {
+                      'format': 'bestaudio/best',
+                      'postprocessors': [{
+                      'key': 'FFmpegExtractAudio',
+                      'preferredcodec': 'mp3',
+                      'preferredquality': '192',
+                        }],
+                        }
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                      ydl.download([finished_url])
+                      for file in os.listdir("./"):
+                        if file.endswith(".mp3"):
+                          os.rename(file, "song.mp3")
+                          voice.play(discord.FFmpegPCMAudio("song.mp3"))
+
+                          
+                      
+                        
+                      
+                      
+                  
+                      
+
+                    
+                      
+
+                else:
+                    song_there = os.path.isfile("song.mp3")
+                    try:
+                      if song_there:
+                        os.remove("song.mp3")
+                    except PermissionError:
+                      await ctx.send("Wait for the current playing music to end or use the 'stop' command")
+                      return
+                    em = discord.Embed(title="Mixer", color=ctx.author.color)
+                    em.add_field(name='Please answer the following question within the next 15 seconds:', value=f"{ctx.author.mention} please type the name of the song you would like to play.")
+                    await ctx.send(embed=em)
+                    try:
+                      msg = await client.wait_for('message', timeout=15.0, check=check)
+
+                    except asyncio.TimeoutError:
+                      em2 = discord.Embed(title='Error', color=ctx.author.color)
+                      em2.add_field(name='Mixer creation failed', value=f"{ctx.author.mention} you're too slow, please be quicker next time")      
+                      await ctx.send(embed=em2) 
+                      return
+                    search_keyword = msg.content.replace(" ", "_")
+                    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + search_keyword)
+                    video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+                    finished_url = ("https://www.youtube.com/watch?v=" + video_ids[0])
+                    video = pafy.new(finished_url)
+                    value = video.length
+                          
+                    if value > 420:
+                      await ctx.send('Sorry, 7 minute maximum length on videos')
+                    else:
+                      ydl_opts = {
+                        'format': 'bestaudio/best',
+                        'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '192',
+                          }],
+                        }
+                      with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                          ydl.download([finished_url])
+                      for file in os.listdir("./"):
+                          if file.endswith(".mp3"):
+                              os.rename(file, "song.mp3")
+                              voice.play(discord.FFmpegPCMAudio("song.mp3"))
+                              timer = value
+                              
+                            
+              else:
+                em=discord.Embed(title='Mixer', color=ctx.author.color) 
+                em.add_field(name='Song added to queue', value=f"{ctx.author.mention}, {finished_url} has been added to the queue, view the queue by doing ';queue'")         
+                pq.enqueue(finished_url)
+
+
+  else:
+    pq.enqueue()
